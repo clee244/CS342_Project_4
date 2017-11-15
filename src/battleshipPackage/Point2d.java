@@ -26,7 +26,7 @@ class Point2d implements Serializable
         debug = b;
     }
 
-    public Point2d (int px, int py)
+    private Point2d (int px, int py)
     {
         x = px;
         y = py;
@@ -52,28 +52,23 @@ class Point2d implements Serializable
         // working.
     }
 
-    public void setX(int px)
-    {
+    public void setX(int px) {
         x = px;
     }
 
-    public int getX()
-    {
+    public int getX() {
         return x;
     }
 
-    public void setY(int py)
-        {
+    public void setY(int py) {
         y = py;
     }
 
-    public int getY()
-    {
+    public int getY() {
         return y;
     }
 
-    public void setXY(int px, int py)
-    {
+    public void setXY(int px, int py) {
         setX(px);
         setY(py);
     }
