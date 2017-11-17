@@ -9,8 +9,8 @@ import javax.swing.*;
 // It will contain a local instance of the game itself
 public class GameGui extends JFrame {
 	private static final long serialVersionUID = 1L;
-	//private JButton[][] gameBoard;
-	//private JButton[] sideButton;
+	private JButton[][] gameBoard = new JButton[10][10];
+	private JLabel board;
 	private JMenu fileMenu, helpMenu;
 	private JMenuBar menuBar;
 	//private JPanel board, sideMenu;
@@ -77,13 +77,21 @@ public class GameGui extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
 		
-		// Add the game board to the container
+		// Add the status window to the container
 		help = new JLabel("Status Window:");
 		help.setHorizontalAlignment(JLabel.CENTER);
 		container.add(help, BorderLayout.CENTER);
 		
+		//
+		board = new JLabel("test");
+	    board.setLayout(new GridBagLayout());
+	    
+	    container.add(board, BorderLayout.SOUTH);
+		//
+	    
 		// Set window size and make it visible
-		setSize(500, 1000);
+		setSize(400, 700);
+		setResizable(false);
 		setVisible(true);
 	}
 	
@@ -92,8 +100,8 @@ public class GameGui extends JFrame {
 		int numShotsFired = 0;
 		double hitsPerMiss = 0.0;
 		
+		// create a new gui
 		GameGui battleship = new GameGui("Network Battleships by Christopher Lee and Tian Zhou");
-		
 	}
 
 }
