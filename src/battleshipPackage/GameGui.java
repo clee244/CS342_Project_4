@@ -1,3 +1,5 @@
+package battleshipPackage;
+
 import java.io.IOException;
 import java.util.*;
 import java.awt.*;
@@ -8,14 +10,13 @@ import javax.swing.*;
 // It will contain a local instance of the game itself
 public class GameGui extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JButton[][] gameBoard = new JButton[10][10];
+	private JButton[][] gameBoard;
 	private JLabel board;
 	private JMenu fileMenu, helpMenu;
 	private JMenuBar menuBar;
-	//private JPanel board, sideMenu;
 	private JLabel help;
 	private Container container;
-	// TODO: needs private instance of the game variable here
+	private Network network;
 	
 	// Constructor
 	public GameGui(String name) throws IOException{
@@ -27,30 +28,26 @@ public class GameGui extends JFrame {
 		container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		// TODO: initialize local instance of the game (and network)
-		//
-		//
-
-        Network network = new Network();
+		// Initialize local instance of the game
+		gameBoard = new JButton[10][10];
+		board = new JLabel();
+		board.setLayout(new GridBagLayout());
+		container.add(board, BorderLayout.SOUTH);
+		
+		// Initialize network
+        network = new Network();
 
 		// Initialize the menu bar items
 		//
 		// File menu
 		fileMenu = new JMenu("File");
 		
-		JMenuItem exitItem = new JMenuItem("Exit");
-		exitItem.setMnemonic('x');
-		fileMenu.add(exitItem);
-		exitItem.addActionListener(e -> System.exit(-1));
+        JMenuItem connectServerItem = new JMenuItem("Connect as Server");
+        JMenuItem connectClientItem = new JMenuItem("Connect as Client");
+        fileMenu.add(connectServerItem);
+        fileMenu.add(connectClientItem);
 
-        JMenuItem connectServer = new JMenuItem("Connect as Server");
-        JMenuItem connectClient = new JMenuItem("Connect as Client");
-        connectServer.setMnemonic('x');
-        connectClient.setMnemonic('x');
-        fileMenu.add(connectServer);
-        fileMenu.add(connectClient);
-
-        connectClient.addActionListener(e -> {
+        connectClientItem.addActionListener(e -> {
             JOptionPane.showInputDialog(this,
                     "HostName:"
             );
@@ -58,6 +55,11 @@ public class GameGui extends JFrame {
                     "PortNumber:"
             );
         });
+        
+		JMenuItem exitItem = new JMenuItem("Exit");
+		exitItem.setMnemonic('x');
+		fileMenu.add(exitItem);
+		exitItem.addActionListener(e -> System.exit(-1));
 
 		// Help menu
 		helpMenu = new JMenu("Help");
@@ -98,13 +100,6 @@ public class GameGui extends JFrame {
 		help = new JLabel("Status Window:");
 		help.setHorizontalAlignment(JLabel.CENTER);
 		container.add(help, BorderLayout.CENTER);
-		
-		//
-		board = new JLabel("test");
-	    board.setLayout(new GridBagLayout());
-	    
-	    container.add(board, BorderLayout.SOUTH);
-		//
 	    
 		// Set window size and make it visible
 		setSize(400, 700);
