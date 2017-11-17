@@ -1,7 +1,6 @@
-package battleshipPackage;
-
 import java.net.*;
 import java.io.*;
+import java.util.Scanner;
 
 public class Network {
     private ServerSocket serverSocket = null;
@@ -15,12 +14,6 @@ public class Network {
     private ObjectInputStream in = null;
     private String args[] = null;
 
-    public Network() throws IOException{
-        startServer();
-        startClient();
-
-    }
-
     //Function to run the server side of the game
     public void startServer() throws IOException{
         //Open Server at port#
@@ -32,7 +25,7 @@ public class Network {
         }
 
         //Accept Client(hopefully)
-        while(!clientSocket.isConnected()){
+        while(clientSocket == null){
             try {
                 System.out.println("Waiting for Client");
                 clientSocket = serverSocket.accept();
@@ -43,7 +36,7 @@ public class Network {
         }
 
         //receive input from client and send output to client
-        while(!serverSocket.isClosed()){
+        while(serverSocket.isClosed() == false){
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -66,8 +59,10 @@ public class Network {
 
     //Function to run the client side of the game, server needs to be opened for connection first
     public void startClient() throws IOException{
-        String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
+        Scanner scanner = new Scanner(System.in);
+
+        String hostName = scanner.nextLine();
+        int portNumber = scanner.nextInt();
 
         //Open client on hostname and port# (take input)
         try {
@@ -78,7 +73,7 @@ public class Network {
             in = new ObjectInputStream(echoSocket.getInputStream());
 
         } catch (UnknownHostException e) {
-            System.err.println("Don't know about host: taranis.");
+            System.err.println("Don't know about host: " + hostName);
             System.exit(1);
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for "
@@ -123,5 +118,12 @@ public class Network {
 
     public Point2d getServerOutput() {
         return serverOutput;
+    }
+
+    public static void main(String[] args) throws IOException{
+        Network network = new Network();
+
+        network.startServer();
+        network.startClient();
     }
 }

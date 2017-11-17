@@ -1,5 +1,4 @@
-package battleshipPackage;
-
+import java.io.IOException;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -19,7 +18,7 @@ public class GameGui extends JFrame {
 	// TODO: needs private instance of the game variable here
 	
 	// Constructor
-	public GameGui(String name) {
+	public GameGui(String name) throws IOException{
 		// takes string and makes it the title of the window
 		super(name);
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -31,7 +30,9 @@ public class GameGui extends JFrame {
 		// TODO: initialize local instance of the game (and network)
 		//
 		//
-		
+
+        Network network = new Network();
+
 		// Initialize the menu bar items
 		//
 		// File menu
@@ -41,7 +42,23 @@ public class GameGui extends JFrame {
 		exitItem.setMnemonic('x');
 		fileMenu.add(exitItem);
 		exitItem.addActionListener(e -> System.exit(-1));
-		
+
+        JMenuItem connectServer = new JMenuItem("Connect as Server");
+        JMenuItem connectClient = new JMenuItem("Connect as Client");
+        connectServer.setMnemonic('x');
+        connectClient.setMnemonic('x');
+        fileMenu.add(connectServer);
+        fileMenu.add(connectClient);
+
+        connectClient.addActionListener(e -> {
+            JOptionPane.showInputDialog(this,
+                    "HostName:"
+            );
+            JOptionPane.showInputDialog(this,
+                    "PortNumber:"
+            );
+        });
+
 		// Help menu
 		helpMenu = new JMenu("Help");
 		
@@ -87,7 +104,7 @@ public class GameGui extends JFrame {
 		setVisible(true);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 		// counters for statistics
 		int numShotsFired = 0;
 		double hitsPerMiss = 0.0;
