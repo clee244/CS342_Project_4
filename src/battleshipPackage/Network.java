@@ -1,129 +1,152 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
-import java.util.Scanner;
+import java.lang.String.*;
 
 public class Network {
-    private ServerSocket serverSocket = null;
-    private Socket echoSocket = null;
-    private Socket clientSocket = null;
-    private Point2d serverInput = null;
-    private Point2d clientInput = null;
-    private Point2d serverOutput = null;
-    private Point2d clientOutput = null;
-    private ObjectOutputStream out = null;
-    private ObjectInputStream in = null;
-    private String args[] = null;
+    // Network Items
+    private boolean running;
+    private boolean connected;
+    private boolean serverContinue;
+    private ServerSocket serverSocket;
+    private Socket commSocket;
+    private PrintWriter out;
+    private BufferedReader in;
+
+    private String machineInfo = "";
+    private int portInfo = 0;
+
+    public void doManageServer()
+    {
+        if (running == false)
+        {
+            new ConnectionThread();
+        }
+        else
+        {
+            serverContinue = false;
+        }
+    }
 
     //Function to run the server side of the game
-    public void startServer() throws IOException{
-        //Open Server at port#
-        try {
-            serverSocket = new ServerSocket(7777);
-        } catch (IOException e) {
-            System.err.println("Could not listen on port: 7777.");
-            System.exit(1);
+    class ConnectionThread extends Thread
+    {
+        public ConnectionThread ()
+        {
+            start();
         }
 
-        //Accept Client(hopefully)
-        while(clientSocket == null){
-            try {
-                System.out.println("Waiting for Client");
-                clientSocket = serverSocket.accept();
-            } catch (IOException e) {
-                System.err.println("Accept failed.");
-                System.exit(1);
-            }
-        }
+        public void run()
+        {
+            int portNum = 0;
+            //serverContinue = true;
 
-        //receive input from client and send output to client
-        while(serverSocket.isClosed() == false){
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
-
-            try {
-                serverInput = (Point2d) in.readObject();
-            }
-            catch (Exception ex)
+            try
             {
-                System.out.println (ex.getMessage());
-            }
-            out.writeObject(serverInput);
-            out.flush();
-        }
+                serverSocket = new ServerSocket(portNum);
+                running = true;
 
-        //out.close();
-        //in.close();
-        //clientSocket.close();
-        //serverSocket.close();
+                // get machine's address
+                InetAddress addr = InetAddress.getLocalHost();
+                machineInfo = addr.getHostAddress();
+
+                // get port number
+                portInfo = serverSocket.getLocalPort();
+
+                JOptionPane.showMessageDialog( null,
+                        "Host: " + machineInfo + "\nPort: " + portInfo);
+
+                System.out.println ("Connection Socket Created");
+                serverContinue = true;
+                try {
+                    {
+                        System.out.println ("Waiting for Connection");
+
+                        try {
+                            commSocket = serverSocket.accept();
+                            System.out.println("Connection Found");
+                            out = new PrintWriter(commSocket.getOutputStream(),
+                                    true);
+                            in = new BufferedReader(
+                                    new InputStreamReader( commSocket.getInputStream()));
+                        }
+                        catch (SocketTimeoutException ste)
+                        {
+                            System.out.println ("Timeout Occurred");
+                        }
+                    }
+                    commSocket = null;
+                    running = false;
+                }
+
+                catch (IOException e)
+                {
+                    JOptionPane.showMessageDialog( null, "Accept failed." );
+                    System.err.println("Accept failed.");
+                    //System.exit(1);
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                JOptionPane.showMessageDialog( null, "Port Number must be an integer" );
+            }
+            catch (IOException e)
+            {
+                JOptionPane.showMessageDialog( null,
+                        "Could not listen on port: " + portNum);
+                System.err.println("Could not listen on port: " + portNum);
+                //System.exit(1);
+            }
+            finally
+            {
+                try {
+                    serverSocket.close();
+                }
+                catch (IOException e)
+                {
+                    System.err.println("Could not close port: " + portNum);
+                    System.exit(1);
+                }
+            }
+        }
     }
 
     //Function to run the client side of the game, server needs to be opened for connection first
-    public void startClient() throws IOException{
-        Scanner scanner = new Scanner(System.in);
+    public void doManageConnection(String host, int port)
+    {
+        machineInfo = host;
+        portInfo = port;
 
-        String hostName = scanner.nextLine();
-        int portNumber = scanner.nextInt();
-
-        //Open client on hostname and port# (take input)
-        try {
-            // echoSocket = new Socket("taranis", 7);
-            echoSocket = new Socket(hostName, portNumber);
-
-            out = new ObjectOutputStream(echoSocket.getOutputStream());
-            in = new ObjectInputStream(echoSocket.getInputStream());
-
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host: " + hostName);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for "
-                    + "the connection to: taranis.");
-            System.exit(1);
-        }
-
-        //send output to server and receive input from server
-        while(!echoSocket.isClosed()){
-            System.out.println ("Sending point: " + clientInput + " to Server");
-            out.writeObject(clientInput);
-            out.flush();
-            System.out.println ("Send point, waiting for return value");
-
+        if (connected == false)
+        {
+            String machineName = null;
+            int portNum = -1;
             try {
-                serverOutput = (Point2d) in.readObject();
-            }
-            catch (Exception ex)
-            {
-                System.out.println (ex.getMessage());
+                machineName = machineInfo;
+                portNum = portInfo;
+                commSocket = new Socket(machineName, portNum );
+                out = new PrintWriter(commSocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(
+                        commSocket.getInputStream()));
+                connected = true;
+            } catch (NumberFormatException e) {
+            } catch (UnknownHostException e) {
+            } catch (IOException e) {
             }
 
-            System.out.println("Got point: " + serverOutput + " from Server");
         }
-
-        //out.close();
-        //in.close();
-        //echoSocket.close();
-    }
-
-    public Point2d getClientInput() {
-        return clientInput;
-    }
-
-    public Point2d getClientOutput() {
-        return clientOutput;
-    }
-
-    public Point2d getServerInput() {
-        return serverInput;
-    }
-
-    public Point2d getServerOutput() {
-        return serverOutput;
-    }
-
-    public static void main(String[] args) throws IOException{
-        Network network = new Network();
-
-        network.startServer();
-        network.startClient();
+        else
+        {
+            try
+            {
+                out.close();
+                in.close();
+                commSocket.close();
+                connected = false;
+            }
+            catch (IOException e)
+            {
+            }
+        }
     }
 }
