@@ -11,6 +11,8 @@ import javax.swing.*;
 public class GameGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JButton[][] gameBoard;
+	private JButton[][] attackBoard;
+	private ImageIcon water;
 	private JLabel board;
 	private JMenu fileMenu, helpMenu;
 	private JMenuBar menuBar;
@@ -28,11 +30,25 @@ public class GameGui extends JFrame {
 		container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		// Initialize local instance of the game
-		gameBoard = new JButton[10][10];
+		// Initialize board which will hold the gameboard
 		board = new JLabel();
 		board.setLayout(new GridBagLayout());
 		container.add(board, BorderLayout.SOUTH);
+		
+		// Initialize the water image
+		water = new ImageIcon(".../images/batt100.gif");
+		
+		// Initialize local instance of the game
+		gameBoard = new JButton[10][10];
+		attackBoard = new JButton[10][10];
+		
+		int i, j;
+		for(i = 0; i < 10; ++i) {
+			for (j = 0; j < 10; ++j) {
+				JButton button = new JButton(water);
+				gameBoard[i][j] = button;
+			}
+		}
 		
 		// Initialize network
         network = new Network();
