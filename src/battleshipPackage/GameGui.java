@@ -45,13 +45,31 @@ public class GameGui extends JFrame {
 		// Help menu
 		helpMenu = new JMenu("Help");
 		
+		JMenuItem howToPlayItem = new JMenuItem("How to play Battleships");
+		helpMenu.add(howToPlayItem);
+		howToPlayItem.addActionListener(e -> {
+			JOptionPane.showMessageDialog(this, 
+					"At the start of the game, players choose where\n"
+					+ "to place their fleet of ships. Then the game\n"
+					+ "proceeds with each player taking turns declaring\n"
+					+ "a cell of the board where they will fire a missile.\n"
+					+ "The game is over when a player's entire fleet is\n"
+					+ "destroyed.",
+					"How to play Battleships", JOptionPane.DEFAULT_OPTION);
+			}
+		);
+		
 		JMenuItem aboutItem = new JMenuItem("About");
 		aboutItem.setMnemonic('a');
 		helpMenu.add(aboutItem);
 		aboutItem.addActionListener(e -> {
-			JOptionPane.showMessageDialog(this, "Network Battleships written by:\nTian Zhou - tzhou29\nChristopher Lee - clee244",
+			JOptionPane.showMessageDialog(this, 
+					"Network Battleships written by:\n"
+					+ "Tian Zhou - tzhou29\n"
+					+ "Christopher Lee - clee244",
 					"About", JOptionPane.DEFAULT_OPTION);
-			});
+			}
+		);
 		
 		// Initialize the menu bar and add the items to it
 		menuBar = new JMenuBar();
@@ -60,12 +78,9 @@ public class GameGui extends JFrame {
 		menuBar.add(helpMenu);
 		
 		// Add the game board to the container
-		help = new JLabel("this is help testing");
+		help = new JLabel("Status Window:");
 		help.setHorizontalAlignment(JLabel.CENTER);
 		container.add(help, BorderLayout.CENTER);
-		//container.add(board, BorderLayout.CENTER);
-		//container.add(sideMenu, BorderLayout.EAST);
-		
 		
 		// Set window size and make it visible
 		setSize(500, 1000);
@@ -73,8 +88,12 @@ public class GameGui extends JFrame {
 	}
 	
 	public static void main(String[] args) {
+		// counters for statistics
+		int numShotsFired = 0;
+		double hitsPerMiss = 0.0;
+		
 		GameGui battleship = new GameGui("Network Battleships by Christopher Lee and Tian Zhou");
-
+		
 	}
 
 }
