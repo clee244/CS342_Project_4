@@ -32,8 +32,8 @@ public class GameGui extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		// Initialize the images
-		water = new ImageIcon(getClass().getResource("images/batt100.gif"));
-		ship  = new ImageIcon(getClass().getResource("images/batt2.gif"));
+		water = new ImageIcon(getClass().getResource("/images/batt100.gif"));
+		ship  = new ImageIcon(getClass().getResource("/images/batt2.gif"));
 		
 		// Initialize local instance of the game
 		gameBoard   = new JButton[10][10];
