@@ -40,15 +40,11 @@ public class GameGui extends JFrame {
 		// Initialize local instance of the game
 		gameBoard   = new JButton[10][10];
 		attackBoard = new JButton[10][10];
-<<<<<<< HEAD
 		
 		// Initialize our fleet of ships
 		ships = new JButton[17];
 		numShips = 0;
 		
-=======
-
->>>>>>> 884d7d61ed63676a069a3549eafdfedadd534d81
 		// Initialize our ocean
 		int i, j;
 		for(i = 0; i < 10; ++i) {
@@ -186,8 +182,7 @@ public class GameGui extends JFrame {
 		setResizable(false);
 		setVisible(true);
 	}
-<<<<<<< HEAD
-	
+
 	// Places a ship on our ocean if we have any ships left to deploy, and if the cell is empty
 	private void placeShip(JButton cell) {
 		if (numShips < 17) {
@@ -221,9 +216,6 @@ public class GameGui extends JFrame {
 		return false;
 	}
 	
-=======
-
->>>>>>> 884d7d61ed63676a069a3549eafdfedadd534d81
 	public static void main(String[] args) throws IOException{
 		// counters for statistics
 		int numShotsFired = 0;
