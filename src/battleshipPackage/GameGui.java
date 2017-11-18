@@ -12,6 +12,8 @@ public class GameGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JButton[][] gameBoard;    // array of buttons representing our 10x10 grid 
 	private JButton[][] attackBoard;  // array of buttons representing opponent's 10x10 grid
+	private JButton[] ships;          // array of buttons representing our fleet of ships
+	private int numShips;             // counter of how many of our ships remain, begins at 0
 	private ImageIcon water;          // image of water, default at start of game
 	private ImageIcon ship;           // image of ship
 	private JMenuBar menuBar;         // menu bar of the gui
@@ -39,6 +41,10 @@ public class GameGui extends JFrame {
 		gameBoard   = new JButton[10][10];
 		attackBoard = new JButton[10][10];
 		
+		// Initialize our fleet of ships
+		ships = new JButton[17];
+		numShips = 0;
+		
 		// Initialize our ocean
 		int i, j;
 		for(i = 0; i < 10; ++i) {
@@ -51,6 +57,10 @@ public class GameGui extends JFrame {
 				c.gridy = j;
 				
 				container.add(gameBoard[i][j], c);
+				
+				JButton temp = gameBoard[i][j];
+				
+				gameBoard[i][j].addActionListener(e -> placeShip(temp));
 			}
 		}
 		
@@ -155,6 +165,39 @@ public class GameGui extends JFrame {
 		setSize(200, 450);
 		setResizable(false);
 		setVisible(true);
+	}
+	
+	// Places a ship on our ocean if we have any ships left to deploy, and if the cell is empty
+	private void placeShip(JButton cell) {
+		if (numShips < 17) {
+			if (!contains(ships, cell)) {
+				// change the button's image to a ship
+				cell.setIcon(ship);
+				
+				// display the changes on status message
+				GridBagLayout layout = (GridBagLayout) container.getLayout();
+				GridBagConstraints gbc = layout.getConstraints(cell);
+				int x = gbc.gridx;
+				int y = gbc.gridy;
+				help.setText("Ship placed at (" + x + "," + y + ").");
+				
+				// add the button to our ship array
+				ships[numShips] = cell;
+				numShips++;
+			}
+		}
+	}
+	
+	// Returns true if button is in the array, false if not
+	private boolean contains(JButton[] array, JButton toFind) {
+		int i;
+		for (i = 0; i < array.length; ++i) {
+			if (array[i] == toFind) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static void main(String[] args) throws IOException{
