@@ -18,7 +18,9 @@ public class GameGui extends JFrame {
 	private int numHits;              // counter of total hits we landed on opponent
 	private double accuracy;          // percentage of hits per shot
 	private ImageIcon water;          // image of water, default at start of game
-	private ImageIcon ship;           // image of ship
+	private ImageIcon ship;           // image of ship used to denote our fleet
+	private ImageIcon missed;         // image of other shade of water to denote we missed a shot
+	private ImageIcon hit;            // image of an opponent ship that we have hit
 	private JMenuBar menuBar;         // menu bar of the gui
 	private JMenu fileMenu, helpMenu; // drop down lists in the menu bar
 	private JLabel help;              // status message at the middle of the gui, used to inform the player
@@ -38,8 +40,10 @@ public class GameGui extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		// Initialize the images
-		water = new ImageIcon(getClass().getResource("/images/batt100.gif"));
-		ship  = new ImageIcon(getClass().getResource("/images/batt2.gif"));
+		water  = new ImageIcon(getClass().getResource("/images/batt100.gif"));
+		ship   = new ImageIcon(getClass().getResource("/images/batt2.gif"));
+		missed = new ImageIcon(getClass().getResource("/images/batt102.gif"));
+		hit    = new ImageIcon(getClass().getResource("/images/batt103.gif"));
 
 		// Initialize local instance of the game
 		gameBoard   = new JButton[10][10];
