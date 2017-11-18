@@ -14,11 +14,15 @@ public class GameGui extends JFrame {
 	private JButton[][] attackBoard;  // array of buttons representing opponent's 10x10 grid
 	private JButton[] ships;          // array of buttons representing our fleet of ships
 	private int numShips;             // counter of how many of our ships remain, begins at 0
+	private int numShotsFired;        // counter of total shots we fired at opponent
+	private int numHits;              // counter of total hits we landed on opponent
+	private double accuracy;          // percentage of hits per shot
 	private ImageIcon water;          // image of water, default at start of game
 	private ImageIcon ship;           // image of ship
 	private JMenuBar menuBar;         // menu bar of the gui
 	private JMenu fileMenu, helpMenu; // drop down lists in the menu bar
 	private JLabel help;              // status message at the middle of the gui, used to inform the player
+	private JLabel stats;             // statistics window
 	private Container container;      // the frame pane of the gui, add components to this
 	private Network network;          // the network that will connect the players together
 
@@ -34,8 +38,8 @@ public class GameGui extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		// Initialize the images
-		water = new ImageIcon(getClass().getResource("images/batt100.gif"));
-		ship  = new ImageIcon(getClass().getResource("images/batt2.gif"));
+		water = new ImageIcon(getClass().getResource("/images/batt100.gif"));
+		ship  = new ImageIcon(getClass().getResource("/images/batt2.gif"));
 
 		// Initialize local instance of the game
 		gameBoard   = new JButton[10][10];
@@ -83,6 +87,15 @@ public class GameGui extends JFrame {
 				container.add(attackBoard[i][j], c);
 			}
 		}
+		
+		// Add the statistics window to bottom of container
+		numShotsFired = 0;
+		numHits       = 0;
+		accuracy      = 0.0;
+		stats = new JLabel();
+		updateStats();
+		gbc.gridy = 22;
+		container.add(stats, gbc);
 
 		// Initialize network
 		network = new Network();
@@ -216,10 +229,13 @@ public class GameGui extends JFrame {
 		return false;
 	}
 	
+	// Updates the statistics window with the latest information
+	private void updateStats() {
+		accuracy = (double)numHits/numShotsFired;
+		stats.setText("Shots: " + numShotsFired + ". Hits: " + numHits + ". Accuracy: " + accuracy);
+	}
+	
 	public static void main(String[] args) throws IOException{
-		// counters for statistics
-		int numShotsFired = 0;
-		double hitsPerMiss = 0.0;
 
 		// create a new gui
 		GameGui battleship = new GameGui("Battleships");
