@@ -1,7 +1,13 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.net.*;
 import java.io.*;
 import java.lang.String.*;
+
+/* Network handles the Server and Client connections
+ * Uses example code EchoGui.java from lecture notes 11/16/17
+ */
+
 
 public class Network {
     // Network Items
@@ -15,6 +21,23 @@ public class Network {
 
     private String machineInfo = "";
     private int portInfo = 0;
+
+    public ServerSocket getServerSocket() {
+        return serverSocket;
+    }
+
+    //Close Socket when exit is clicked/Game is over
+    public void doServerClose()
+    {
+        try {
+            serverSocket.close();
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could not close port: " + portInfo);
+            System.exit(1);
+        }
+    }
 
     public void doManageServer()
     {
@@ -59,22 +82,16 @@ public class Network {
                 System.out.println ("Connection Socket Created");
                 serverContinue = true;
                 try {
-                    {
-                        System.out.println ("Waiting for Connection");
-
-                        try {
-                            commSocket = serverSocket.accept();
-                            System.out.println("Connection Found");
-                            out = new PrintWriter(commSocket.getOutputStream(),
-                                    true);
-                            in = new BufferedReader(
-                                    new InputStreamReader( commSocket.getInputStream()));
-                        }
-                        catch (SocketTimeoutException ste)
-                        {
-                            System.out.println ("Timeout Occurred");
-                        }
+                    System.out.println ("Waiting for Connection");
+                    try {
+                        commSocket = serverSocket.accept();
+                        out = new PrintWriter(commSocket.getOutputStream(), true);
+                        in = new BufferedReader(new InputStreamReader( commSocket.getInputStream()));
                     }
+                    catch (SocketTimeoutException ste) {
+                                System.out.println("Timeout Occurred");
+                    }
+                    System.out.println("Connection Found");
                     commSocket = null;
                     running = false;
                 }
@@ -96,17 +113,6 @@ public class Network {
                         "Could not listen on port: " + portNum);
                 System.err.println("Could not listen on port: " + portNum);
                 //System.exit(1);
-            }
-            finally
-            {
-                try {
-                    serverSocket.close();
-                }
-                catch (IOException e)
-                {
-                    System.err.println("Could not close port: " + portNum);
-                    System.exit(1);
-                }
             }
         }
     }
@@ -130,8 +136,12 @@ public class Network {
                         commSocket.getInputStream()));
                 connected = true;
             } catch (NumberFormatException e) {
+                System.out.println("Server Port must be an integer\n");
             } catch (UnknownHostException e) {
+                System.out.println("Don't know about host: " + machineName);
             } catch (IOException e) {
+                System.out.println("Couldn't get I/O for "
+                        + "the connection to: " + machineName);
             }
 
         }
