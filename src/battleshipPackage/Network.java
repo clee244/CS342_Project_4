@@ -1,3 +1,5 @@
+package battleshipPackage;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.net.*;
