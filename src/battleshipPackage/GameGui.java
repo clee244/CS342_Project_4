@@ -10,50 +10,67 @@ import javax.swing.*;
 // It will contain a local instance of the game itself
 public class GameGui extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JButton[][] gameBoard;
-	private JButton[][] attackBoard;
-	private ImageIcon water;
-	private JLabel board;
-	private JMenu fileMenu, helpMenu;
-	private JMenuBar menuBar;
-	private JLabel help;
-	private Container container;
-	private Network network;
+	private JButton[][] gameBoard;    // array of buttons representing our 10x10 grid 
+	private JButton[][] attackBoard;  // array of buttons representing opponent's 10x10 grid
+	private ImageIcon water;          // image of water, default at start of game
+	private ImageIcon ship;           // image of ship
+	private JMenuBar menuBar;         // menu bar of the gui
+	private JMenu fileMenu, helpMenu; // drop down lists in the menu bar
+	private JLabel help;              // status message at the middle of the gui, used to inform the player
+	private Container container;      // the frame pane of the gui, add components to this
+	private Network network;          // the network that will connect the players together
 	
 	// Constructor
 	public GameGui(String name) throws IOException{
 		// takes string and makes it the title of the window
 		super(name);
-		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// Register the window layout
 		container = getContentPane();
 		container.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		// Initialize board which will hold the gameboard
-		board = new JLabel();
-		board.setLayout(new GridBagLayout());
-		//container.add(board, BorderLayout.NORTH);
-		
-		// Initialize the water image
+		// Initialize the images
 		water = new ImageIcon(getClass().getResource("images/batt100.gif"));
+		ship  = new ImageIcon(getClass().getResource("images/batt2.gif"));
 		
 		// Initialize local instance of the game
-		gameBoard = new JButton[10][10];
+		gameBoard   = new JButton[10][10];
 		attackBoard = new JButton[10][10];
 		
+		// Initialize our ocean
 		int i, j;
 		for(i = 0; i < 10; ++i) {
 			for (j = 0; j < 10; ++j) {
 				gameBoard[i][j] = new JButton(water);
-				GridBagConstraints c = new GridBagConstraints();
+				gameBoard[i][j].setPreferredSize(new Dimension(18, 18));
 				
+				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = i;
 				c.gridy = j;
 				
-				gameBoard[i][j].setPreferredSize(new Dimension(18, 18));
 				container.add(gameBoard[i][j], c);
+			}
+		}
+		
+		// Add the status window to the container
+		help = new JLabel("Welcome to BattleShips.\n");
+		gbc.gridy = 11;
+		gbc.gridwidth = 11;
+		container.add(help, gbc);
+		
+		// Initialize opponent's ocean
+		for(i = 0; i < 10; ++i) {
+			for (j = 0; j < 10; ++j) {
+				attackBoard[i][j] = new JButton(water);
+				attackBoard[i][j].setPreferredSize(new Dimension(18, 18));
+				
+				GridBagConstraints c = new GridBagConstraints();
+				c.gridx = i;
+				c.gridy = j+12;
+
+				container.add(attackBoard[i][j], c);
 			}
 		}
 		
@@ -71,13 +88,12 @@ public class GameGui extends JFrame {
         fileMenu.add(connectClientItem);
 
         connectClientItem.addActionListener(e -> {
-            JOptionPane.showInputDialog(this,
-                    "HostName:"
-            );
-            JOptionPane.showInputDialog(this,
-                    "PortNumber:"
-            );
-        });
+	            JOptionPane.showInputDialog(this,
+	                    "HostName:");
+	            JOptionPane.showInputDialog(this,
+	                    "PortNumber:");
+	        }
+        );
         
 		JMenuItem exitItem = new JMenuItem("Exit");
 		exitItem.setMnemonic('x');
@@ -87,9 +103,9 @@ public class GameGui extends JFrame {
 		// Help menu
 		helpMenu = new JMenu("Help");
 		
-		JMenuItem howToPlayItem = new JMenuItem("How to play Battleships");
-		helpMenu.add(howToPlayItem);
-		howToPlayItem.addActionListener(e -> {
+		JMenuItem howToPlayBattleshipItem = new JMenuItem("How to play Battleships");
+		helpMenu.add(howToPlayBattleshipItem);
+		howToPlayBattleshipItem.addActionListener(e -> {
 			JOptionPane.showMessageDialog(this, 
 					"At the start of the game, players choose where\n"
 					+ "to place their fleet of ships. Then the game\n"
@@ -98,6 +114,21 @@ public class GameGui extends JFrame {
 					+ "The game is over when a player's entire fleet is\n"
 					+ "destroyed.",
 					"How to play Battleships", JOptionPane.DEFAULT_OPTION);
+			}
+		);
+		
+		JMenuItem howToPlayItem = new JMenuItem("How to use the UI");
+		helpMenu.add(howToPlayItem);
+		howToPlayItem.addActionListener(e -> {
+			JOptionPane.showMessageDialog(this, 
+					"The 10x10 grid on top is your fleet's ocean.\n"
+					+ "The grid on the bottom is your opponent's.\n"
+					+ "Begin by selecting cells on your grid to place\n"
+					+ "your battleships.\n"
+					+ "The status message in the middle will tell you\n"
+					+ "which player's turn it is and the events of\n"
+					+ "the game.",
+					"How to use the UI", JOptionPane.DEFAULT_OPTION);
 			}
 		);
 		
@@ -119,13 +150,10 @@ public class GameGui extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
 		
-		// Add the status window to the container
-		help = new JLabel("Status Window:");
-		//container.add(help, BorderLayout.CENTER);
 	    
 		// Set window size and make it visible
-		setSize(400, 700);
-		//setResizable(false);
+		setSize(200, 450);
+		setResizable(false);
 		setVisible(true);
 	}
 	
@@ -135,7 +163,7 @@ public class GameGui extends JFrame {
 		double hitsPerMiss = 0.0;
 		
 		// create a new gui
-		GameGui battleship = new GameGui("Network Battleships by Christopher Lee and Tian Zhou");
+		GameGui battleship = new GameGui("Battleships");
 	}
 
 }
