@@ -26,17 +26,18 @@ public class GameGui extends JFrame {
 		super(name);
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		
-		// register the window layout
+		// Register the window layout
 		container = getContentPane();
-		container.setLayout(new BorderLayout());
+		container.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
 		
 		// Initialize board which will hold the gameboard
 		board = new JLabel();
 		board.setLayout(new GridBagLayout());
-		container.add(board, BorderLayout.SOUTH);
+		//container.add(board, BorderLayout.NORTH);
 		
 		// Initialize the water image
-		water = new ImageIcon(".../images/batt100.gif");
+		water = new ImageIcon(getClass().getResource("images/batt100.gif"));
 		
 		// Initialize local instance of the game
 		gameBoard = new JButton[10][10];
@@ -45,8 +46,14 @@ public class GameGui extends JFrame {
 		int i, j;
 		for(i = 0; i < 10; ++i) {
 			for (j = 0; j < 10; ++j) {
-				JButton button = new JButton(water);
-				gameBoard[i][j] = button;
+				gameBoard[i][j] = new JButton(water);
+				GridBagConstraints c = new GridBagConstraints();
+				
+				c.gridx = i;
+				c.gridy = j;
+				
+				gameBoard[i][j].setPreferredSize(new Dimension(18, 18));
+				container.add(gameBoard[i][j], c);
 			}
 		}
 		
@@ -114,12 +121,11 @@ public class GameGui extends JFrame {
 		
 		// Add the status window to the container
 		help = new JLabel("Status Window:");
-		help.setHorizontalAlignment(JLabel.CENTER);
-		container.add(help, BorderLayout.CENTER);
+		//container.add(help, BorderLayout.CENTER);
 	    
 		// Set window size and make it visible
 		setSize(400, 700);
-		setResizable(false);
+		//setResizable(false);
 		setVisible(true);
 	}
 	
